@@ -1,5 +1,11 @@
+require 'erb'
+require 'cgi'
+require 'date'
+require 'active_support/time_with_zone'
 require 'bundler'
-Bundler.require
+Bundler.require(:default, :development)
+
+VERSION = 'v1'
 
 secret = YAML.load(open('../secret.yml').read)
 
@@ -7,36 +13,42 @@ client = Asana::Client.new do |c|
   c.authentication :access_token, secret['asana']['personal_access_token']
 end
 
-p client.workspaces.find_all
+date = Date.parse(ARGV[0] || Time.now.to_s)
+task_list = Asana::Resources::Task.find_all client,
+  workspace: secret['asana']['workspace_id'],
+  assignee: :me,
+  completed_since: "#{date.to_s}T00:00:00.000Z",
+  # specify fields to be returned
+  options: { fields: %w$
+    name
+    notes
+    created_at
+    due_on
+    completed
+    completed_at
+    hearted
+    workspace.name
+    memberships.(project|section).name
+    stories
+    $ }
 
-binding.pry
+# task_completed = task_list.select{|t| t.completed }.sample(5) # TODO: remove sample()
+task_completed = task_list.select{|t| t.completed && t.hearted && t.notes.length > 0 } #.sample(5) # TODO: remove sample()
 
-# [15] pry(main)> $ client.workspaces.instance_eval { @resource }.find_all
-#
-# From: /Users/hash/work/asana-evernote/ruby/.bundle/ruby/2.2.0/gems/asana-0.5.0/lib/asana/resources/workspace.rb @ line 49:
-# Owner: #<Class:Asana::Resources::Workspace>
-# Visibility: public
-# Number of lines: 4
-#
-# def find_all(client, per_page: 20, options: {})
-#   params = { limit: per_page }.reject { |_,v| v.nil? || Array(v).empty? }
-#   Collection.new(parse(client.get("/workspaces", params: params, options: options)), type: self, client: client)
-# end
+# "Consider updating your project status"
+# https://app.asana.com/0/503195131478/76902390551534
+# https://app.asana.com/0/000000000000/76902390551534 ;; also OK
 
+enutils = ENUtils::Core.new(secret['evernote']['developer_token'])
+tagname = "asana-evernote-logger.#{VERSION}"
+evernote_tag = enutils.tag(tagname) || enutils.create_tag(name: tagname)
 
-# [21] pry(main)> p Asana::Resources::Workspace.instance_methods(false);
-# [:id, :name, :is_organization, :update, :typeahead, :add_user, :remove_user]
-
-# [22] pry(main)> p Asana::Resources::Task.instance_methods(false);
-# [:id, :assignee, :assignee_status, :created_at, :completed, :completed_at, :due_on, :due_at, :external, :followers, :hearted, :hearts, :modified_at, :name, :notes, :num_hearts, :projects, :parent, :workspace, :memberships, :tags, :update, :delete, :add_followers, :remove_followers, :add_project, :remove_project, :add_tag, :remove_tag, :subtasks, :add_subtask, :set_parent, :stories, :add_comment]
-
-# -- class methods を含むのは ls ClassName.
-# [7] pry(main)> ls client.tasks.instance_eval { @resource }
-# Object.methods: yaml_tag
-# Asana::Resources::ResponseHelper#methods: parse
-# Asana::Resources::Resource.methods: inherited
-# Asana::Resources::Task.methods: create  create_in_workspace  find_all  find_by_id  find_by_project  find_by_tag  plural_name
-# Asana::Resources::Task#methods:
-#   add_comment    add_project  add_tag   assignee_status  completed_at  delete  due_on    followers  hearts  memberships  name   num_hearts  projects          remove_project  set_parent  subtasks  update
-#   add_followers  add_subtask  assignee  completed        created_at    due_at  external  hearted    id      modified_at  notes  parent      remove_followers  remove_tag      stories     tags      workspace
-
+task_completed.each do |task|
+  ap task
+  erb = ERB.new(open('../template.html.erb').read)
+  enutils.create_note(title: task.name,
+                      notebook: enutils.notebook('Asana'),
+                      tag: evernote_tag,
+                      from_html: true,
+                      content: erb.result(binding)) # local variable 'task' will be passed
+end

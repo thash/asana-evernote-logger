@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    .name {
+      font-size: 16px;
+    }
+    .metainfo {
+      border-radius: 6px;
+      background: #FC636B; /* rgba(68, 222, 67, 0.64) */
+      padding: 10px;
+      color: #fbfbfb;
+      font-weight: bold;
+    }
+    .heart {
+      display: inline;
+      color: #FC636B;
+    }
+    .notes {
+      margin: 20px;
+    }
+    .stories {
+      border-radius: 6px;
+      border: 2px solid #FC636B; /* rgba(144, 222, 142, 0.64) */
+      padding: 5px;
+    }
+    .stories > .created_at,.completed_at {
+      color: #FC636B;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="name">
+    <% if membership = task.memberships.find{|m| m['project'] } %>
+    <% prefix = membership['project']['id'].to_s %>
+    <% else %>
+    <% prefix = '0' * 12 %>
+    <% end %>
+    <a href="https://app.asana.com/0/<%="#{prefix}/#{task.id}"%>" target='_blank'><%= task.name %></a>
+    <% if task.hearted %> : <div class="heart"> ❤ </div><% end %>
+  </div>
+  <br />
+  <div class="metainfo">
+    <div class="workspace">
+      Workspace: <%= task.workspace['name'] %>
+    </div>
+    <div class="project">
+      Project: <%= membership ? membership['project']['name'] : 'N/A' %>
+      <% if membership['section'] %><%= " > " + membership['section']['name'] %><% end %>
+    </div>
+    <div class="due_on">Due: <%= task.due_on %></div>
+    <div class="completed_on">Completed: <%= Time.parse(task.completed_at).in_time_zone('Asia/Tokyo').to_date.to_s %></div>
+  </div>
+  <div class="notes">
+    <% if task.notes.length > 0 %>
+      <%= CGI.escapeHTML(task.notes).gsub("\n", "<br />") %>
+      <br />
+    <% end %>
+  </div>
+  <div class="stories">
+    <div class="created_at"><%= Time.parse(task.created_at).in_time_zone('Asia/Tokyo').to_s %> -- created</div>
+    <% task.stories.each do |story| %>
+    <div class="story story_id_<%= story.id.to_s %>">
+      <%= Time.parse(story.created_at).in_time_zone('Asia/Tokyo').to_s + ": " %>
+      <% if story.type == 'comment' %>
+        <%= story.created_by['name'] %>「<%= CGI.escapeHTML(story.text) %>」
+      <% else %>
+        <%= story.created_by['name'] %> <%= CGI.escapeHTML(story.text) %>
+      <% end %>
+      <br />
+    </div>
+    <% end %>
+    <div class="completed_at"><%= Time.parse(task.completed_at).in_time_zone('Asia/Tokyo').to_s %> -- completed</div>
+  </div>
+
+</body>
+</html>

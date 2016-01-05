@@ -13,11 +13,12 @@ GEM
       faraday_middleware (~> 0.9)
       faraday_middleware-multi_json (~> 0.0)
       oauth2 (~> 1.0)
+    awesome_print (1.6.1)
     coderay (1.1.0)
     css_parser (1.3.7)
       addressable
     evernote-thrift (1.25.2)
-    evernote_utils (0.1.0)
+    evernote_utils (0.1.1)
       activesupport
       evernote-thrift (~> 1.25.1)
       roadie
@@ -66,7 +67,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activesupport
   asana
+  awesome_print
   evernote_utils
   pry
   pry-doc
