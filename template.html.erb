@@ -35,9 +35,9 @@
 <body>
   <div class="name">
     <% if membership = task.memberships.find{|m| m['project'] } %>
-    <% prefix = membership['project']['id'].to_s %>
+      <% prefix = membership['project']['id'].to_s %>
     <% else %>
-    <% prefix = '0' * 12 %>
+      <% prefix = '0' * 12 %>
     <% end %>
     <a href="https://app.asana.com/0/<%="#{prefix}/#{task.id}"%>" target='_blank'><%= task.name %></a>
     <% if task.hearted %> : <div class="heart"> ❤ </div><% end %>
