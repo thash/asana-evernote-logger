@@ -51,4 +51,5 @@ task_completed.each do |task|
                       tag: evernote_tag,
                       from_html: true,
                       content: erb.result(binding)) # local variable 'task' will be passed
+  sleep 5
 end
