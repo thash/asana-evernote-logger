@@ -39,17 +39,19 @@
     <% else %>
       <% prefix = '0' * 12 %>
     <% end %>
-    <a href="https://app.asana.com/0/<%="#{prefix}/#{task.id}"%>" target='_blank'><%= task.name %></a>
+    <a href="https://app.asana.com/0/<%="#{prefix}/#{task.id}"%>" target='_blank'><%= CGI.escapeHTML(task.name) %></a>
     <% if task.hearted %> : <div class="heart"> ❤ </div><% end %>
   </div>
   <br />
   <div class="metainfo">
     <div class="workspace">
-      Workspace: <%= task.workspace['name'] %>
+      Workspace: <%= CGI.escapeHTML(task.workspace['name']) %>
     </div>
     <div class="project">
-      Project: <%= membership ? membership['project']['name'] : 'N/A' %>
-      <% if membership['section'] %><%= " > " + membership['section']['name'] %><% end %>
+      Project: <%= membership ? CGI.escapeHTML(membership['project']['name']) : 'N/A' %>
+      <% if membership && membership['section'] %>
+        <%= " > " + CGI.escapeHTML(membership['section']['name']) %>
+      <% end %>
     </div>
     <div class="due_on">Due: <%= task.due_on %></div>
     <div class="completed_on">Completed: <%= Time.parse(task.completed_at).in_time_zone('Asia/Tokyo').to_date.to_s %></div>
