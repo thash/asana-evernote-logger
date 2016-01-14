@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 gem 'asana'
 gem 'evernote_utils'
 gem 'activesupport'
+gem 'aws-sdk'
 
 group :development do
   gem 'awesome_print'

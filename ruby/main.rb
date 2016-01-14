@@ -7,18 +7,26 @@ Bundler.require(:default, :development)
 require './asana_fetcher'
 require './note_manager'
 
-VERSION = 'v2'
 
 secret = YAML.load(open('../secret.yml').read)
 
+cred = Aws::Credentials.new(secret['aws']['access_key'],
+                            secret['aws']['secret_access_key'])
+@dynamo = Aws::DynamoDB::Client.new(region: 'ap-northeast-1', credentials: cred)
+
+
 asana   = AsanaFetcher.new(secret)
+
+version = "asana-evernote-logger.#{`git rev-parse HEAD`.chomp[0..6]}"
 manager = NoteManager.new(secret, template: '../template.html.erb',
-                                  note_tag: "asana-evernote-logger.#{VERSION}")
+                                  version: version)
 
+# TODO: manage records - remote all EverNote notes without specific tag, etc
 task_completed = asana.fetch(completed_since: Date.parse(ARGV[0] || Time.now.to_s))
-                      .select{|t| t.completed }.sample(5) # TODO: remove sample()
+                      .select{|t| t.completed }.sample(10) # TODO: remove sample()
 
-task_completed.each do |task|
+puts "logging #{task_count = task_completed.count} tasks..."
+task_completed.each_with_index do |task, i|
   manager.process(task)
-  sleep 5
+  sleep 5 unless task_count == i + 1
 end
