@@ -21,7 +21,6 @@ version = "asana-evernote-logger.#{`git rev-parse HEAD`.chomp[0..6]}"
 manager = NoteManager.new(secret, template: '../template.html.erb',
                                   version: version)
 
-# TODO: manage records - remote all EverNote notes without specific tag, etc
 task_completed = asana.fetch(completed_since: Date.parse(ARGV[0] || Time.now.to_s))
                       .select{|t| t.completed }
 task_completed = task_completed.sample(ARGV[1].to_i) if ARGV && ARGV[1]
