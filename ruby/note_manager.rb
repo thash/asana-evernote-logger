@@ -29,7 +29,9 @@ class NoteManager
   rescue => e
     STDERR.puts "#{Time.now}: #{e}"
     STDERR.puts "#{Time.now}: #{e.message}"
-    dynamo_put({task_id: task.id, note_guid: nil, error: e.message})
+    # ref: https://dev.evernote.com/doc/reference/Errors.html#Struct_EDAMSystemException
+    dynamo_put({task_id: task.id, note_guid: nil,
+                error: "#{e}\t#{e.message}\t#{e.errorCode}\t#{e.rateLimitDuration}"})
   end
 
   def save_note(task)
