@@ -8,15 +8,8 @@ require './asana_fetcher'
 require './note_manager'
 
 
-secret = YAML.load(open('../secret.yml').read)
-
-cred = Aws::Credentials.new(secret['aws']['access_key'],
-                            secret['aws']['secret_access_key'])
-@dynamo = Aws::DynamoDB::Client.new(region: 'ap-northeast-1', credentials: cred)
-
-
+secret  = YAML.load(open('../secret.yml').read)
 asana   = AsanaFetcher.new(secret)
-
 version = "asana-evernote-logger.#{`git rev-parse HEAD`.chomp[0..6]}"
 manager = NoteManager.new(secret, template: '../template.html.erb',
                                   version: version)
