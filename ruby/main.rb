@@ -21,5 +21,5 @@ task_completed = task_completed.sample(ARGV[1].to_i) if ARGV && ARGV[1]
 puts "logging #{task_count = task_completed.count} tasks..."
 task_completed.each_with_index do |task, i|
   manager.process(task)
-  sleep 5 unless task_count == i + 1
+  sleep 1 unless task_count == i + 1
 end

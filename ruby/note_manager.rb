@@ -27,11 +27,15 @@ class NoteManager
     puts "#{Time.now}: complete"
 
   rescue => e
-    STDERR.puts "#{Time.now}: #{e}"
-    STDERR.puts "#{Time.now}: #{e.message}"
+    error_msg = "#{e}\t#{e.message}\t#{e.errorCode}\t#{e.rateLimitDuration}"
+    STDERR.puts "#{Time.now}: #{error_msg}"
     # ref: https://dev.evernote.com/doc/reference/Errors.html#Struct_EDAMSystemException
-    dynamo_put({task_id: task.id, note_guid: nil,
-                error: "#{e}\t#{e.message}\t#{e.errorCode}\t#{e.rateLimitDuration}"})
+    dynamo_put({task_id: task.id, note_guid: nil, error: error_msg})
+    if e.errorCode == 19 # RATE_LIMIT_REACHED
+      STDERR.puts "#{Time.now}: sleep and retry for #{e.rateLimitDuration.to_i} sec..."
+      sleep e.rateLimitDuration.to_i
+      retry
+    end
   end
 
   def save_note(task)
