@@ -1,4 +1,1 @@
-# TODOs
-
-- [] Log all past tasks
-- [] Manage logging status and avoid duplication using DynamoDB
+Log [Asana](https://asana.com) completed tasks into [EverNote](https://evernote.com)
