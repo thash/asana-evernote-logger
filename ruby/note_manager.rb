@@ -27,7 +27,8 @@ class NoteManager
     puts "#{Time.now}: complete"
 
   rescue => e
-    error_msg = "#{e}\t#{e.message}\t#{e.errorCode}\t#{e.rateLimitDuration}"
+    error_msg = "#{e}\t#{e.message}\t#{e.errorCode}"
+    error_msg += "\t#{e.rateLimitDuration}" if e.respond_to?(:rateLimitDuration)
     STDERR.puts "#{Time.now}: #{error_msg}"
     # ref: https://dev.evernote.com/doc/reference/Errors.html#Struct_EDAMSystemException
     dynamo_put({task_id: task.id, note_guid: nil, error: error_msg})
