@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gem 'asana'
 gem 'evernote_utils'
-gem 'activesupport'
+gem 'activesupport', '>= 6.1.7.5'
 gem 'aws-sdk'
 
 group :development do
