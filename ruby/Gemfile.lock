@@ -1117,7 +1117,7 @@ GEM
       yard (~> 0.9.11)
     public_suffix (5.0.0)
     racc (1.6.2)
-    rack (3.0.14)
+    rack (3.1.18)
     roadie (4.0.0)
       css_parser (~> 1.4)
       nokogiri (~> 1.8)
@@ -1131,7 +1131,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activesupport
+  activesupport (>= 6.1.7.5)
   asana
   awesome_print
   aws-sdk
