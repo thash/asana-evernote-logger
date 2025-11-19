@@ -1,0 +1,7 @@
+version: 2
+updates:
+  - package-ecosystem: "bundler"
+    directory: "/ruby"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 0
