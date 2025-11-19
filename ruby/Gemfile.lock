@@ -1,7 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (6.1.7.3)
+    activesupport (6.1.7.5)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
@@ -1100,7 +1100,7 @@ GEM
     multi_json (1.15.0)
     multi_xml (0.6.0)
     multipart-post (2.2.3)
-    nokogiri (1.14.3)
+    nokogiri (1.18.9)
       mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
     oauth2 (1.4.11)
@@ -1117,14 +1117,14 @@ GEM
       yard (~> 0.9.11)
     public_suffix (5.0.0)
     racc (1.6.2)
-    rack (3.0.6.1)
+    rack (3.0.14)
     roadie (4.0.0)
       css_parser (~> 1.4)
       nokogiri (~> 1.8)
     ruby2_keywords (0.0.5)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
-    yard (0.9.26)
+    yard (0.9.36)
     zeitwerk (2.6.7)
 
 PLATFORMS
@@ -1140,4 +1140,4 @@ DEPENDENCIES
   pry-doc
 
 BUNDLED WITH
-   1.17.2
+   2.3.26
