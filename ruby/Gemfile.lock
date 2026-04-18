@@ -1125,7 +1125,7 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     uri (1.1.1)
-    yard (0.9.36)
+    yard (0.9.42)
 
 PLATFORMS
   ruby
